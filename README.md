@@ -268,6 +268,126 @@ https://messenger-server.tail9da30d.ts.net/
 ```
 Данный результат показывает, что для клиентских приложений Matrix опубликован base URL homeserver, использующий MagicDNS-домен Tailscale.
 
+- Произведён `ping messenger-server.tail9da30d.ts.net` запрос. Выполнена проверка сетевой доступности узла по полному MagicDNS-имени:
+
+```text
+Pinging messenger-server.tail9da30d.ts.net. [100.83.165.96] with 32 bytes of data:
+Reply from 100.83.165.96: bytes=32 time=21ms TTL=64
+Reply from 100.83.165.96: bytes=32 time=19ms TTL=64
+Reply from 100.83.165.96: bytes=32 time=21ms TTL=64
+Reply from 100.83.165.96: bytes=32 time=19ms TTL=64
+
+Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+Minimum = 19ms, Maximum = 21ms, Average = 20ms
+```
+
+По результатам проверки подтверждено, что полное MagicDNS-имя `messenger-server.tail9da30d.ts.net` разрешается в Tailscale IP `100.83.165.96`.
+
+- Произведён `curl -I https://messenger-server.tail9da30d.ts.net/` запрос. Выполнена проверка HTTPS-сервиса по адресу, опубликованному в Matrix client discovery:
+
+```text
+HTTP/1.1 302 Found
+Alt-Svc: h3=":443"; ma=2592000
+Content-Length: 208
+Content-Type: text/html; charset=utf-8
+Date: Wed, 03 Jun 2026 07:53:37 GMT
+Location: /_matrix/static
+Server: Synapse/1.153.0
+Via: 1.1 Caddy
+```
+
+Получен ответ `HTTP/1.1 302 Found`, указывающий на перенаправление к ресурсу `/_matrix/static`. В заголовке `Server` указано значение `Synapse/1.153.0`, что позволяет идентифицировать конкретную реализацию Matrix homeserver как **Synapse версии 1.153.0**. Также присутствует заголовок `Via: 1.1 Caddy`, что указывает на использование Caddy в качестве reverse proxy или промежуточного веб-сервера. 
+
+- Произведён `curl https://messenger-server.tail9da30d.ts.net/_matrix/client/versions` запрос. Выполнена проверка Matrix Client-Server API через опубликованный HTTPS `base_url`:
+
+```json
+{
+  "versions": [
+    "r0.0.1",
+    "r0.1.0",
+    "r0.2.0",
+    "r0.3.0",
+    "r0.4.0",
+    "r0.5.0",
+    "r0.6.0",
+    "r0.6.1",
+    "v1.1",
+    "v1.2",
+    "v1.3",
+    "v1.4",
+    "v1.5",
+    "v1.6",
+    "v1.7",
+    "v1.8",
+    "v1.9",
+    "v1.10",
+    "v1.11",
+    "v1.12"
+  ]
+}
+```
+
+Ответ подтверждает, что Matrix Client-Server API доступен не только через `http://messenger-server:8008`, но и через опубликованный HTTPS-адрес `https://messenger-server.tail9da30d.ts.net`. Сервер поддерживает версии Matrix Client-Server API до `v1.12`, а также возвращает список дополнительных `unstable_features`. 
+
+- Произведён `curl http://messenger-server` запрос. Получено тело HTML-страницы, отдаваемой сервисом на порту `80`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+...
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, nginx is successfully installed and working.
+Further configuration is required for the web server, reverse proxy,
+API gateway, load balancer, content cache, or other features.</p>
+...
+</html>
+```
+
+Полученная страница является стандартной приветственной страницей nginx. Это указывает, что на HTTP-порту `80` запущен nginx, однако для данного виртуального хоста, вероятно, не настроено прикладное содержимое или корректное перенаправление на Matrix/веб-клиент. 
+
+- Произведён `curl http://messenger-server:8008/_matrix/client/v3/register` запрос. Выполнена проверка endpoint регистрации Matrix Client-Server API:
+
+```json
+{
+  "errcode": "M_UNRECOGNIZED",
+  "error": "Unrecognized request"
+}
+```
+
+Сервер вернул ошибку `M_UNRECOGNIZED`, что указывает на то, что указанный endpoint в данном виде не был распознан сервером на порту `8008`.
+
+- Произведён `curl http://messenger-server:8008/_matrix/client/v3/publicRooms` запрос. Выполнена проверка доступности публичного каталога комнат Matrix:
+
+```json
+{
+  "errcode": "M_MISSING_TOKEN",
+  "error": "Missing access token"
+}
+```
+
+Сервер вернул ошибку `M_MISSING_TOKEN`, что означает отсутствие access token в запросе. Это указывает, что доступ к публичному каталогу комнат через данный endpoint требует аутентификации.
+
+- Произведён `curl -v http://messenger-server` запрос. Выполнена расширенная проверка HTTP-соединения с узлом `messenger-server`:
+
+```text
+* Host messenger-server:80 was resolved.
+* IPv4: 100.83.165.96
+* Trying 100.83.165.96:80...
+* Established connection to messenger-server (100.83.165.96 port 80) from 100.125.222.113 port 57195
+> GET / HTTP/1.1
+> Host: messenger-server
+> User-Agent: curl/8.19.0
+> Accept: */*
+< HTTP/1.1 200 OK
+< Server: nginx
+< Content-Type: text/html
+< Content-Length: 896
+```
+
+Verbose-режим подтвердил, что имя `messenger-server` разрешается в IPv4-адрес `100.83.165.96`, после чего устанавливается HTTP-соединение с портом `80`. Ответ сервера содержит `HTTP/1.1 200 OK`, заголовок `Server: nginx` и HTML-страницу стандартной установки nginx. 
+
 - Был создан аккаунт в мессенджер и произведён вход
   - Перешёл по https://app.element.io/
   - Нажал Создать аккаунт
