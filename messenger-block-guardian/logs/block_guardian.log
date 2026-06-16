@@ -1,0 +1,15 @@
+2026-06-06 15:17:11  iptables DROP all tcp/udp -> 100.112.9.31
+2026-06-06 15:17:11  Route blackhole 100.112.9.31/32
+2026-06-06 15:17:11  Guardian started mode=MESSENGER kill_clients=0
+2026-06-06 15:17:11  WARNING: 3 existing tailnet TCP session(s). Restart messenger client to test block.
+2026-06-06 14:53:30  BLOCK ATTEMPT DETECTED: nheko (15976) 100.121.214.58:63194 -> 100.83.165.96:443 [established]
+2026-06-06 14:53:30  BLOCK ATTEMPT DETECTED: nheko (15976) 100.121.214.58:63187 -> 100.83.165.96:443 [established]
+2026-06-06 14:53:30  BLOCK ATTEMPT DETECTED: nheko (15976) 100.121.214.58:63165 -> 100.83.165.96:443 [established]
+2026-06-06 14:54:17  BLOCK ATTEMPT DETECTED: nheko (15976) 100.121.214.58:63194 -> 100.83.165.96:443 [established]
+2026-06-06 14:54:17  BLOCK ATTEMPT DETECTED: nheko (15976) 100.121.214.58:63165 -> 100.83.165.96:443 [syn-sent]
+2026-06-06 14:55:01  Guardian loop interrupted
+2026-06-06 14:58:38  All blocks removed
+2026-06-06 21:57:24  iptables DROP all tcp/udp -> 100.112.9.31
+2026-06-06 21:57:24  Route blackhole 100.112.9.31/32
+2026-06-06 21:57:24  Guardian started mode=MESSENGER kill_clients=0
+2026-06-06 22:20:24  Guardian loop interrupted
