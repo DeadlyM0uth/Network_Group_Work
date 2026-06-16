@@ -1,4 +1,4 @@
-﻿HTTP/1.1 200 OK
+﻿HTTP/1.1 401 Unauthorized
 Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization, Date
 Access-Control-Allow-Methods: GET, HEAD, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Origin: *
@@ -6,10 +6,10 @@ Access-Control-Expose-Headers: Synapse-Trace-Id, Server
 Alt-Svc: h3=":443"; ma=2592000
 Cache-Control: no-cache, no-store, must-revalidate
 Content-Type: application/json
-Date: Tue, 16 Jun 2026 21:03:30 GMT
+Date: Tue, 16 Jun 2026 21:03:44 GMT
 Server: Synapse/1.153.0
 Via: 1.1 Caddy
 Transfer-Encoding: chunked
 
-{"flows":[{"type":"m.login.password"},{"type":"m.login.application_service"}]}
+{"errcode":"M_MISSING_TOKEN","error":"Missing access token"}
 
